@@ -88,8 +88,8 @@ namespace cryptonote {
   /************************************************************************/
   size_t get_min_block_weight(uint8_t version);
   size_t get_max_tx_size();
-  bool get_block_reward(size_t median_weight, size_t current_block_weight, uint64_t already_generated_coins, uint64_t &reward, uint8_t version);
-  uint8_t get_account_address_checksum(const public_address_outer_blob& bl);
+  bool get_block_reward(size_t median_weight, size_t current_block_weight, uint64_t already_generated_coins, uint64_t &reward, uint8_t version, uint64_t block_height = static_cast<uint64_t>(-1));
+  uint8_t get_account_address_checksum(const public_address_outer_blob &bl);
   uint8_t get_account_integrated_address_checksum(const public_integrated_address_outer_blob& bl);
 
   std::string get_account_address_as_str(

@@ -459,12 +459,12 @@ bool Blockchain::init(BlockchainDB* db, const network_type nettype, bool offline
       return false;
   }
 
-  if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
-  {
-    const crypto::hash seedhash = get_block_id_by_height(crypto::rx_seedheight(m_db->height()));
-    if (seedhash != crypto::null_hash)
-      rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
-  }
+  // if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
+  // {
+  //   const crypto::hash seedhash = get_block_id_by_height(crypto::rx_seedheight(m_db->height()));
+  //   if (seedhash != crypto::null_hash)
+  //     rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
+  // }
 
   return true;
 }
@@ -581,11 +581,11 @@ void Blockchain::pop_blocks(uint64_t nblocks)
   if (stop_batch)
     m_db->batch_stop();
 
-  if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
-  {
-    const crypto::hash seedhash = get_block_id_by_height(crypto::rx_seedheight(m_db->height()));
-    rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
-  }
+  // if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
+  // {
+  //   const crypto::hash seedhash = get_block_id_by_height(crypto::rx_seedheight(m_db->height()));
+  //   rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
+  // }
 }
 //------------------------------------------------------------------
 // This function tells BlockchainDB to remove the top block from the
@@ -1280,8 +1280,8 @@ bool Blockchain::switch_to_alternative_blockchain(std::list<block_extended_info>
     }
   }
 
-  if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
-    rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
+  // if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
+  //   rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
 
   MGINFO_GREEN("REORGANIZE SUCCESS! on height: " << split_height << ", new blockchain size: " << m_db->height());
   return true;
@@ -1371,10 +1371,10 @@ bool Blockchain::prevalidate_miner_transaction(const block& b, uint64_t height, 
   CHECK_AND_ASSERT_MES(b.miner_tx.version > 1 || hf_version < HF_VERSION_MIN_V2_COINBASE_TX, false, "Invalid coinbase transaction version");
 
   // for v2 txes (ringct), we only accept empty rct signatures for miner transactions,
-  if (hf_version >= HF_VERSION_REJECT_SIGS_IN_COINBASE && b.miner_tx.version >= 2)
-  {
-    CHECK_AND_ASSERT_MES(b.miner_tx.rct_signatures.type == rct::RCTTypeNull, false, "RingCT signatures not allowed in coinbase transactions");
-  }
+  // if (hf_version >= HF_VERSION_REJECT_SIGS_IN_COINBASE && b.miner_tx.version >= 2)
+  // {
+  //   CHECK_AND_ASSERT_MES(b.miner_tx.rct_signatures.type == rct::RCTTypeNull, false, "RingCT signatures not allowed in coinbase transactions");
+  // }
 
   if(boost::get<txin_gen>(b.miner_tx.vin[0]).height != height)
   {
@@ -1416,17 +1416,17 @@ bool Blockchain::validate_miner_transaction(const block& b, size_t cumulative_bl
   }
 
   uint64_t median_weight;
-  if (version >= HF_VERSION_EFFECTIVE_SHORT_TERM_MEDIAN_IN_PENALTY)
-  {
-    median_weight = m_current_block_cumul_weight_median;
-  }
-  else
+  // if (version >= HF_VERSION_EFFECTIVE_SHORT_TERM_MEDIAN_IN_PENALTY)
+  // {
+  //   median_weight = m_current_block_cumul_weight_median;
+  // }
+  // else
   {
     std::vector<uint64_t> last_blocks_weights;
     get_last_n_blocks_weights(last_blocks_weights, CRYPTONOTE_REWARD_BLOCKS_WINDOW);
     median_weight = epee::misc_utils::median(last_blocks_weights);
   }
-  if (!get_block_reward(median_weight, cumulative_block_weight, already_generated_coins, base_reward, version))
+  if (!get_block_reward(median_weight, cumulative_block_weight, already_generated_coins, base_reward, version, m_db->height()))
   {
     MERROR_VER("block weight " << cumulative_block_weight << " is bigger than allowed for this blockchain");
     return false;
@@ -1607,12 +1607,12 @@ bool Blockchain::create_block_template(block& b, const crypto::hash *from_block,
       CHECK_AND_ASSERT_MES(get_block_by_hash(*from_block, prev_block), false, "From block not found"); // TODO
       uint64_t from_block_height = cryptonote::get_block_height(prev_block);
       height = from_block_height + 1;
-      if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
-      {
-        uint64_t next_height;
-        crypto::rx_seedheights(height, &seed_height, &next_height);
-        seed_hash = get_block_id_by_height(seed_height);
-      }
+      // if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
+      // {
+      //   uint64_t next_height;
+      //   crypto::rx_seedheights(height, &seed_height, &next_height);
+      //   seed_hash = get_block_id_by_height(seed_height);
+      // }
     }
     else
     {
@@ -1669,12 +1669,12 @@ bool Blockchain::create_block_template(block& b, const crypto::hash *from_block,
     median_weight = m_current_block_cumul_weight_limit / 2;
     diffic = get_difficulty_for_next_block();
     already_generated_coins = m_db->get_block_already_generated_coins(height - 1);
-    if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
-    {
-      uint64_t next_height;
-      crypto::rx_seedheights(height, &seed_height, &next_height);
-      seed_hash = get_block_id_by_height(seed_height);
-    }
+    // if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
+    // {
+    //   uint64_t next_height;
+    //   crypto::rx_seedheights(height, &seed_height, &next_height);
+    //   seed_hash = get_block_id_by_height(seed_height);
+    // }
   }
   b.timestamp = time(NULL);
 
@@ -1827,12 +1827,12 @@ bool Blockchain::get_miner_data(uint8_t& major_version, uint64_t& height, crypto
   major_version = m_hardfork->get_ideal_version(height);
 
   seed_hash = crypto::null_hash;
-  if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
-  {
-    uint64_t seed_height, next_height;
-    crypto::rx_seedheights(height, &seed_height, &next_height);
-    seed_hash = get_block_id_by_height(seed_height);
-  }
+  // if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
+  // {
+  //   uint64_t seed_height, next_height;
+  //   crypto::rx_seedheights(height, &seed_height, &next_height);
+  //   seed_hash = get_block_id_by_height(seed_height);
+  // }
 
   difficulty = get_difficulty_for_next_block();
   median_weight = m_current_block_cumul_weight_median;
@@ -2003,27 +2003,27 @@ bool Blockchain::handle_alternative_block(const block& b, const crypto::hash& id
     CHECK_AND_ASSERT_MES(current_diff, false, "!!!!!!! DIFFICULTY OVERHEAD !!!!!!!");
     crypto::hash proof_of_work;
     memset(proof_of_work.data, 0xff, sizeof(proof_of_work.data));
-    if (b.major_version >= RX_BLOCK_VERSION)
-    {
-      crypto::hash seedhash = null_hash;
-      uint64_t seedheight = rx_seedheight(bei.height);
-      // seedblock is on the alt chain somewhere
-      if (alt_chain.size() && alt_chain.front().height <= seedheight)
-      {
-        for (auto it=alt_chain.begin(); it != alt_chain.end(); it++)
-        {
-          if (it->height == seedheight+1)
-          {
-            seedhash = it->bl.prev_id;
-            break;
-          }
-        }
-      } else
-      {
-        seedhash = get_block_id_by_height(seedheight);
-      }
-      get_altblock_longhash(bei.bl, proof_of_work, seedhash);
-    } else
+    // if (b.major_version >= RX_BLOCK_VERSION)
+    // {
+    //   crypto::hash seedhash = null_hash;
+    //   uint64_t seedheight = rx_seedheight(bei.height);
+    //   // seedblock is on the alt chain somewhere
+    //   if (alt_chain.size() && alt_chain.front().height <= seedheight)
+    //   {
+    //     for (auto it=alt_chain.begin(); it != alt_chain.end(); it++)
+    //     {
+    //       if (it->height == seedheight+1)
+    //       {
+    //         seedhash = it->bl.prev_id;
+    //         break;
+    //       }
+    //     }
+    //   } else
+    //   {
+    //     seedhash = get_block_id_by_height(seedheight);
+    //   }
+    //   get_altblock_longhash(bei.bl, proof_of_work, seedhash);
+    // } else
     {
       get_block_longhash(this, bei.bl, proof_of_work, bei.height, 0);
     }
@@ -3080,124 +3080,124 @@ bool Blockchain::check_tx_outputs(const transaction& tx, tx_verification_context
     }
   }
 
-  // from v8, allow bulletproofs
-  if (hf_version < 8) {
+  // from v10, allow bulletproofs
+  if (hf_version < HF_VERSION_BULLETPROOFS) {
     if (tx.version >= 2) {
       const bool bulletproof = rct::is_rct_bulletproof(tx.rct_signatures.type);
       if (bulletproof || !tx.rct_signatures.p.bulletproofs.empty())
       {
-        MERROR_VER("Bulletproofs are not allowed before v8");
+        MERROR_VER("Bulletproofs are not allowed before v10");
         tvc.m_invalid_output = true;
         return false;
       }
     }
   }
 
-  // from v9, forbid borromean range proofs
-  if (hf_version > 8) {
+  // from v11, forbid borromean range proofs
+  if (hf_version > HF_VERSION_BULLETPROOFS) {
     if (tx.version >= 2) {
       const bool borromean = rct::is_rct_borromean(tx.rct_signatures.type);
       if (borromean)
       {
-        MERROR_VER("Borromean range proofs are not allowed after v8");
+        MERROR_VER("Borromean range proofs are not allowed after v10");
         tvc.m_invalid_output = true;
         return false;
       }
     }
   }
 
-  // from v10, allow bulletproofs v2
-  if (hf_version < HF_VERSION_SMALLER_BP) {
-    if (tx.version >= 2) {
-      if (tx.rct_signatures.type == rct::RCTTypeBulletproof2)
-      {
-        MERROR_VER("Ringct type " << (unsigned)rct::RCTTypeBulletproof2 << " is not allowed before v" << HF_VERSION_SMALLER_BP);
-        tvc.m_invalid_output = true;
-        return false;
-      }
-    }
-  }
+  // // from v10, allow bulletproofs v2
+  // if (hf_version < HF_VERSION_SMALLER_BP) {
+  //   if (tx.version >= 2) {
+  //     if (tx.rct_signatures.type == rct::RCTTypeBulletproof2)
+  //     {
+  //       MERROR_VER("Ringct type " << (unsigned)rct::RCTTypeBulletproof2 << " is not allowed before v" << HF_VERSION_SMALLER_BP);
+  //       tvc.m_invalid_output = true;
+  //       return false;
+  //     }
+  //   }
+  // }
 
-  // from v11, allow only bulletproofs v2
-  if (hf_version > HF_VERSION_SMALLER_BP) {
-    if (tx.version >= 2) {
-      if (tx.rct_signatures.type == rct::RCTTypeBulletproof)
-      {
-        MERROR_VER("Ringct type " << (unsigned)rct::RCTTypeBulletproof << " is not allowed from v" << (HF_VERSION_SMALLER_BP + 1));
-        tvc.m_invalid_output = true;
-        return false;
-      }
-    }
-  }
+  // // from v11, allow only bulletproofs v2
+  // if (hf_version > HF_VERSION_SMALLER_BP) {
+  //   if (tx.version >= 2) {
+  //     if (tx.rct_signatures.type == rct::RCTTypeBulletproof)
+  //     {
+  //       MERROR_VER("Ringct type " << (unsigned)rct::RCTTypeBulletproof << " is not allowed from v" << (HF_VERSION_SMALLER_BP + 1));
+  //       tvc.m_invalid_output = true;
+  //       return false;
+  //     }
+  //   }
+  // }
 
-  // from v13, allow CLSAGs
-  if (hf_version < HF_VERSION_CLSAG) {
-    if (tx.version >= 2) {
-      if (tx.rct_signatures.type == rct::RCTTypeCLSAG)
-      {
-        MERROR_VER("Ringct type " << (unsigned)rct::RCTTypeCLSAG << " is not allowed before v" << HF_VERSION_CLSAG);
-        tvc.m_invalid_output = true;
-        return false;
-      }
-    }
-  }
+  // // from v13, allow CLSAGs
+  // if (hf_version < HF_VERSION_CLSAG) {
+  //   if (tx.version >= 2) {
+  //     if (tx.rct_signatures.type == rct::RCTTypeCLSAG)
+  //     {
+  //       MERROR_VER("Ringct type " << (unsigned)rct::RCTTypeCLSAG << " is not allowed before v" << HF_VERSION_CLSAG);
+  //       tvc.m_invalid_output = true;
+  //       return false;
+  //     }
+  //   }
+  // }
 
-  // from v14, allow only CLSAGs
-  if (hf_version > HF_VERSION_CLSAG) {
-    if (tx.version >= 2) {
-      if (tx.rct_signatures.type <= rct::RCTTypeBulletproof2)
-      {
-        // two MLSAG txes went in due to a bug with txes that went into the txpool before the fork, grandfather them in
-        static const char * grandfathered[2] = { "c5151944f0583097ba0c88cd0f43e7fabb3881278aa2f73b3b0a007c5d34e910", "6f2f117cde6fbcf8d4a6ef8974fcac744726574ac38cf25d3322c996b21edd4c" };
-        crypto::hash h0, h1;
-        epee::string_tools::hex_to_pod(grandfathered[0], h0);
-        epee::string_tools::hex_to_pod(grandfathered[1], h1);
-        if (cryptonote::get_transaction_hash(tx) == h0 || cryptonote::get_transaction_hash(tx) == h1)
-        {
-          MDEBUG("Grandfathering cryptonote::get_transaction_hash(tx) in");
-        }
-        else
-        {
-          MERROR_VER("Ringct type " << (unsigned)tx.rct_signatures.type << " is not allowed from v" << (HF_VERSION_CLSAG + 1));
-          tvc.m_invalid_output = true;
-          return false;
-        }
-      }
-    }
-  }
+  // // from v14, allow only CLSAGs
+  // if (hf_version > HF_VERSION_CLSAG) {
+  //   if (tx.version >= 2) {
+  //     if (tx.rct_signatures.type <= rct::RCTTypeBulletproof2)
+  //     {
+  //       // two MLSAG txes went in due to a bug with txes that went into the txpool before the fork, grandfather them in
+  //       static const char * grandfathered[2] = { "c5151944f0583097ba0c88cd0f43e7fabb3881278aa2f73b3b0a007c5d34e910", "6f2f117cde6fbcf8d4a6ef8974fcac744726574ac38cf25d3322c996b21edd4c" };
+  //       crypto::hash h0, h1;
+  //       epee::string_tools::hex_to_pod(grandfathered[0], h0);
+  //       epee::string_tools::hex_to_pod(grandfathered[1], h1);
+  //       if (cryptonote::get_transaction_hash(tx) == h0 || cryptonote::get_transaction_hash(tx) == h1)
+  //       {
+  //         MDEBUG("Grandfathering cryptonote::get_transaction_hash(tx) in");
+  //       }
+  //       else
+  //       {
+  //         MERROR_VER("Ringct type " << (unsigned)tx.rct_signatures.type << " is not allowed from v" << (HF_VERSION_CLSAG + 1));
+  //         tvc.m_invalid_output = true;
+  //         return false;
+  //       }
+  //     }
+  //   }
+  // }
 
-  // from v15, allow bulletproofs plus
-  if (hf_version < HF_VERSION_BULLETPROOF_PLUS) {
-    if (tx.version >= 2) {
-      const bool bulletproof_plus = rct::is_rct_bulletproof_plus(tx.rct_signatures.type);
-      if (bulletproof_plus || !tx.rct_signatures.p.bulletproofs_plus.empty())
-      {
-        MERROR_VER("Bulletproofs plus are not allowed before v" << std::to_string(HF_VERSION_BULLETPROOF_PLUS));
-        tvc.m_invalid_output = true;
-        return false;
-      }
-    }
-  }
+  // // from v15, allow bulletproofs plus
+  // if (hf_version < HF_VERSION_BULLETPROOF_PLUS) {
+  //   if (tx.version >= 2) {
+  //     const bool bulletproof_plus = rct::is_rct_bulletproof_plus(tx.rct_signatures.type);
+  //     if (bulletproof_plus || !tx.rct_signatures.p.bulletproofs_plus.empty())
+  //     {
+  //       MERROR_VER("Bulletproofs plus are not allowed before v" << std::to_string(HF_VERSION_BULLETPROOF_PLUS));
+  //       tvc.m_invalid_output = true;
+  //       return false;
+  //     }
+  //   }
+  // }
 
-  // from v16, forbid bulletproofs
-  if (hf_version > HF_VERSION_BULLETPROOF_PLUS) {
-    if (tx.version >= 2) {
-      const bool bulletproof = rct::is_rct_bulletproof(tx.rct_signatures.type);
-      if (bulletproof)
-      {
-        MERROR_VER("Bulletproof range proofs are not allowed after v" + std::to_string(HF_VERSION_BULLETPROOF_PLUS));
-        tvc.m_invalid_output = true;
-        return false;
-      }
-    }
-  }
+  // // from v16, forbid bulletproofs
+  // if (hf_version > HF_VERSION_BULLETPROOF_PLUS) {
+  //   if (tx.version >= 2) {
+  //     const bool bulletproof = rct::is_rct_bulletproof(tx.rct_signatures.type);
+  //     if (bulletproof)
+  //     {
+  //       MERROR_VER("Bulletproof range proofs are not allowed after v" + std::to_string(HF_VERSION_BULLETPROOF_PLUS));
+  //       tvc.m_invalid_output = true;
+  //       return false;
+  //     }
+  //   }
+  // }
 
-  // from v15, require view tags on outputs
-  if (!check_output_types(tx, hf_version))
-  {
-    tvc.m_invalid_output = true;
-    return false;
-  }
+  // // from v15, require view tags on outputs
+  // if (!check_output_types(tx, hf_version))
+  // {
+  //   tvc.m_invalid_output = true;
+  //   return false;
+  // }
 
   return true;
 }
@@ -3322,18 +3322,18 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
 
   const uint8_t hf_version = m_hardfork->get_current_version();
 
-  if (hf_version >= HF_VERSION_MIN_2_OUTPUTS)
-  {
-    if (tx.version >= 2)
-    {
-      if (tx.vout.size() < 2)
-      {
-        MERROR_VER("Tx " << get_transaction_hash(tx) << " has fewer than two outputs");
-        tvc.m_too_few_outputs = true;
-        return false;
-      }
-    }
-  }
+  // if (hf_version >= HF_VERSION_MIN_2_OUTPUTS)
+  // {
+  //   if (tx.version >= 2)
+  //   {
+  //     if (tx.vout.size() < 2)
+  //     {
+  //       MERROR_VER("Tx " << get_transaction_hash(tx) << " has fewer than two outputs");
+  //       tvc.m_too_few_outputs = true;
+  //       return false;
+  //     }
+  //   }
+  // }
 
   // from hard fork 2, we require mixin at least 2 unless one output cannot mix with 2 others
   // if one output cannot mix with 2 others, we accept at most 1 output that can mix
@@ -3342,7 +3342,8 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     size_t n_unmixable = 0, n_mixable = 0;
     size_t min_actual_mixin = std::numeric_limits<size_t>::max();
     size_t max_actual_mixin = 0;
-    const size_t min_mixin = hf_version >= HF_VERSION_MIN_MIXIN_15 ? 15 : hf_version >= HF_VERSION_MIN_MIXIN_10 ? 10 : hf_version >= HF_VERSION_MIN_MIXIN_6 ? 6 : hf_version >= HF_VERSION_MIN_MIXIN_4 ? 4 : 2;
+    const size_t min_mixin = hf_version >= HF_VERSION_MIN_MIXIN_20 ? 20 : 1;
+    // const size_t min_mixin = hf_version >= HF_VERSION_MIN_MIXIN_15 ? 15 : hf_version >= HF_VERSION_MIN_MIXIN_10 ? 10 : hf_version >= HF_VERSION_MIN_MIXIN_6 ? 6 : hf_version >= HF_VERSION_MIN_MIXIN_4 ? 4 : 2;
     for (const auto& txin : tx.vin)
     {
       // non txin_to_key inputs will be rejected below
@@ -3375,9 +3376,10 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     }
     MDEBUG("Mixin: " << min_actual_mixin << "-" << max_actual_mixin);
 
-    if (hf_version >= HF_VERSION_SAME_MIXIN)
+    // if (hf_version >= HF_VERSION_SAME_MIXIN)
+    if (hf_version >= HF_VERSION_MIN_MIXIN_20 && min_actual_mixin != 20)
     {
-      if (min_actual_mixin != max_actual_mixin)
+      // if (min_actual_mixin != max_actual_mixin)
       {
         MERROR_VER("Tx " << get_transaction_hash(tx) << " has varying ring size (" << (min_actual_mixin + 1) << "-" << (max_actual_mixin + 1) << "), it should be constant");
         tvc.m_low_mixin = true;
@@ -3389,7 +3391,8 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     // allowed is when spending unmixable non-RCT outputs in the chain.
     // Caveat: at HF_VERSION_MIN_MIXIN_15, temporarily allow ring sizes
     // of 11 to allow a grace period in the transition to larger ring size.
-    if (min_actual_mixin < min_mixin && !(hf_version == HF_VERSION_MIN_MIXIN_15 && min_actual_mixin == 10))
+    // if (min_actual_mixin < min_mixin && !(hf_version == HF_VERSION_MIN_MIXIN_15 && min_actual_mixin == 10))
+    if (min_actual_mixin < min_mixin)
     {
       if (n_unmixable == 0)
       {
@@ -3403,16 +3406,17 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
         tvc.m_low_mixin = true;
         return false;
       }
-    } else if ((hf_version > HF_VERSION_MIN_MIXIN_15 && min_actual_mixin > 15)
-      || (hf_version == HF_VERSION_MIN_MIXIN_15 && min_actual_mixin != 15 && min_actual_mixin != 10) // grace period to allow either 15 or 10
-      || (hf_version < HF_VERSION_MIN_MIXIN_15 && hf_version >= HF_VERSION_MIN_MIXIN_10+2 && min_actual_mixin > 10)
-      || ((hf_version == HF_VERSION_MIN_MIXIN_10 || hf_version == HF_VERSION_MIN_MIXIN_10+1) && min_actual_mixin != 10)
-    )
-    {
-      MERROR_VER("Tx " << get_transaction_hash(tx) << " has invalid ring size (" << (min_actual_mixin + 1) << "), it should be " << (min_mixin + 1));
-      tvc.m_low_mixin = true;
-      return false;
-    }
+    } 
+    // else if ((hf_version > HF_VERSION_MIN_MIXIN_15 && min_actual_mixin > 15)
+    //   || (hf_version == HF_VERSION_MIN_MIXIN_15 && min_actual_mixin != 15 && min_actual_mixin != 10) // grace period to allow either 15 or 10
+    //   || (hf_version < HF_VERSION_MIN_MIXIN_15 && hf_version >= HF_VERSION_MIN_MIXIN_10+2 && min_actual_mixin > 10)
+    //   || ((hf_version == HF_VERSION_MIN_MIXIN_10 || hf_version == HF_VERSION_MIN_MIXIN_10+1) && min_actual_mixin != 10)
+    // )
+    // {
+    //   MERROR_VER("Tx " << get_transaction_hash(tx) << " has invalid ring size (" << (min_actual_mixin + 1) << "), it should be " << (min_mixin + 1));
+    //   tvc.m_low_mixin = true;
+    //   return false;
+    // }
 
     // min/max tx version based on HF, and we accept v1 txes if having a non mixable
     const size_t max_tx_version = (hf_version <= 3) ? 1 : 2;
@@ -3530,11 +3534,11 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
       return false;
 
   // enforce min output age
-  if (hf_version >= HF_VERSION_ENFORCE_MIN_AGE)
-  {
-    CHECK_AND_ASSERT_MES(*pmax_used_block_height + CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE <= m_db->height(),
-        false, "Transaction spends at least one output which is too young");
-  }
+  // if (hf_version >= HF_VERSION_ENFORCE_MIN_AGE)
+  // {
+  //   CHECK_AND_ASSERT_MES(*pmax_used_block_height + CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE <= m_db->height(),
+  //       false, "Transaction spends at least one output which is too young");
+  // }
 
   // Warn that new RCT types are present, and thus the cache is not being used effectively
   static constexpr const std::uint8_t RCT_CACHE_TYPE = rct::RCTTypeBulletproofPlus;
@@ -3658,16 +3662,16 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
       return false;
     }
 
-    // for bulletproofs, check they're only multi-output after v8
+    // for bulletproofs, check they're only multi-output after v10
     if (rct::is_rct_bulletproof(rv.type))
     {
-      if (hf_version < 8)
+      if (hf_version < HF_VERSION_BULLETPROOFS)
       {
         for (const rct::Bulletproof &proof: rv.p.bulletproofs)
         {
           if (proof.V.size() > 1)
           {
-            MERROR_VER("Multi output bulletproofs are invalid before v8");
+            MERROR_VER("Multi output bulletproofs are invalid before v10");
             return false;
           }
         }
@@ -4251,13 +4255,13 @@ leave:
       proof_of_work = get_block_longhash(this, bl, blockchain_height, 0);
 
     // validate proof_of_work versus difficulty target
-    if(!check_hash(proof_of_work, current_diffic))
-    {
-      MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << " at height " << blockchain_height << ", unexpected difficulty: " << current_diffic);
-      bvc.m_verifivation_failed = true;
-      bvc.m_bad_pow = true;
-      goto leave;
-    }
+    // if(!check_hash(proof_of_work, current_diffic))
+    // {
+    //   MERROR_VER("Block with id: " << id << std::endl << "does not have enough proof of work: " << proof_of_work << " at height " << blockchain_height << ", unexpected difficulty: " << current_diffic);
+    //   bvc.m_verifivation_failed = true;
+    //   bvc.m_bad_pow = true;
+    //   goto leave;
+    // }
   }
 
   // If we're at a checkpoint, ensure that our hardcoded checkpoint hash
@@ -4533,8 +4537,8 @@ leave:
   for (const auto& notifier: m_block_notifiers)
     notifier(new_height - 1, {std::addressof(bl), 1});
 
-  if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
-    rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
+  // if (m_hardfork->get_current_version() >= RX_BLOCK_VERSION)
+  //   rx_set_main_seedhash(seedhash.data, tools::get_max_concurrency());
 
   return true;
 }

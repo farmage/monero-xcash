@@ -1668,6 +1668,16 @@ namespace cryptonote
       }
       b = &lb;
     }
+
+    // cryptonote::block block=lb;
+    // uint64_t block_height = boost::get<txin_gen>(block.miner_tx.vin.front()).height;
+    // std::cout << "Block: " << block_height << std::endl;
+    // std::cout << cryptonote::obj_to_json_str(block) << std::endl;
+
+  // std::string bstr = obj_to_json_str(bl);
+  // LOG_PRINT_L3("Block: " << block_height << "  " << bstr);
+  // LOG_PRINT_L3("Block: " << bstr);
+
     add_new_block(*b, bvc);
     if(update_miner_blocktemplate && bvc.m_added_to_main_chain)
        update_miner_block_template();

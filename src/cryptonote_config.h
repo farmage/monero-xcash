@@ -38,7 +38,7 @@
 #define CRYPTONOTE_DNS_TIMEOUT_MS                       20000
 
 #define CRYPTONOTE_MAX_BLOCK_NUMBER                     500000000
-#define CRYPTONOTE_MAX_TX_SIZE                          1000000
+#define CRYPTONOTE_MAX_TX_SIZE                          1000000000
 #define CRYPTONOTE_MAX_TX_PER_BLOCK                     0x10000000
 #define CRYPTONOTE_PUBLIC_ADDRESS_TEXTBLOB_VER          0
 #define CRYPTONOTE_MINED_MONEY_UNLOCK_WINDOW            60
@@ -46,14 +46,14 @@
 #define CURRENT_BLOCK_MAJOR_VERSION                     1
 #define CURRENT_BLOCK_MINOR_VERSION                     0
 #define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT              60*60*2
-#define CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE             10
+#define CRYPTONOTE_DEFAULT_TX_SPENDABLE_AGE             1
 
 #define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW               60
 
 // MONEY_SUPPLY - total number coins to be generated
-#define MONEY_SUPPLY                                    ((uint64_t)(-1))
-#define EMISSION_SPEED_FACTOR_PER_MINUTE                (20)
-#define FINAL_SUBSIDY_PER_MINUTE                        ((uint64_t)300000000000) // 3 * pow(10, 11)
+#define MONEY_SUPPLY                                    ((uint64_t)(100000000000000000))
+#define EMISSION_SPEED_FACTOR_PER_MINUTE                (19)
+#define FINAL_SUBSIDY_PER_MINUTE                        ((uint64_t)2000000000) // 2000 X-CASH per minute, creates 1051200000 X-CASH per year, which is an annual inflation of 1.05%. The start date will be around 16/06/2025
 
 #define CRYPTONOTE_REWARD_BLOCKS_WINDOW                 100
 #define CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2    60000 //size of block (bytes) after which reward for block calculated using block size
@@ -62,27 +62,68 @@
 #define CRYPTONOTE_LONG_TERM_BLOCK_WEIGHT_WINDOW_SIZE   100000 // size in blocks of the long term block weight median window
 #define CRYPTONOTE_SHORT_TERM_BLOCK_WEIGHT_SURGE_FACTOR 50
 #define CRYPTONOTE_COINBASE_BLOB_RESERVED_SIZE          600
-#define CRYPTONOTE_DISPLAY_DECIMAL_POINT                12
+#define CRYPTONOTE_DISPLAY_DECIMAL_POINT                6
 // COIN - number of smallest units in one coin
-#define COIN                                            ((uint64_t)1000000000000) // pow(10, 12)
+#define COIN                                            ((uint64_t)1000000) // pow(10, 6)
 
-#define FEE_PER_KB_OLD                                  ((uint64_t)10000000000) // pow(10, 10)
-#define FEE_PER_KB                                      ((uint64_t)2000000000) // 2 * pow(10, 9)
-#define FEE_PER_BYTE                                    ((uint64_t)300000)
-#define DYNAMIC_FEE_PER_KB_BASE_FEE                     ((uint64_t)2000000000) // 2 * pow(10,9)
-#define DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD            ((uint64_t)10000000000000) // 10 * pow(10,12)
-#define DYNAMIC_FEE_PER_KB_BASE_FEE_V5                  ((uint64_t)2000000000 * (uint64_t)CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5)
-#define DYNAMIC_FEE_REFERENCE_TRANSACTION_WEIGHT         ((uint64_t)3000)
+#define FEE_PER_KB_OLD                                  ((uint64_t)10000) // pow(10, 4)
+#define FEE_PER_KB                                      ((uint64_t)2000) // 2 * pow(10, 3)
+#define FEE_PER_BYTE                                    ((uint64_t)10)
+#define DYNAMIC_FEE_PER_KB_BASE_FEE                     ((uint64_t)2000) // 2 * pow(10,3)
+#define DYNAMIC_FEE_PER_KB_BASE_BLOCK_REWARD            ((uint64_t)1000000) // 10 * pow(10,6)
+#define DYNAMIC_FEE_PER_KB_BASE_FEE_V5                  ((uint64_t)1) //((uint64_t)2000 * (uint64_t)CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V2 / CRYPTONOTE_BLOCK_GRANTED_FULL_REWARD_ZONE_V5)
+#define DYNAMIC_FEE_REFERENCE_TRANSACTION_WEIGHT        ((uint64_t)3000)
 
 #define ORPHANED_BLOCKS_MAX_COUNT                       100
 
 
-#define DIFFICULTY_TARGET_V2                            120  // seconds
+#define DIFFICULTY_TARGET_V2                            60  // seconds
 #define DIFFICULTY_TARGET_V1                            60  // seconds - before first fork
 #define DIFFICULTY_WINDOW                               720 // blocks
 #define DIFFICULTY_LAG                                  15  // !!!
 #define DIFFICULTY_CUT                                  60  // timestamps to cut after sorting
 #define DIFFICULTY_BLOCKS_COUNT                         DIFFICULTY_WINDOW + DIFFICULTY_LAG
+
+#define PREMINE_BLOCK_HEIGHT								1
+#define PREMINE_BLOCK_REWARD							((uint64_t)(40000000000000000))
+
+// LWMA difficulty V8
+#define HF_VERSION_LWMA_DIFFICULTY 8
+#define HF_VERSION_LWMA_DIFFICULTY_BLOCK_HEIGHT 95085
+#define HF_VERSION_LWMA_STARTING_DIFFICULTY 30000000
+#define DIFFICULTY_TARGET_V8 60 // seconds
+#define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V8 30 // (11)
+#define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V8 60*4 // (60*10)
+#define DIFFICULTY_WINDOW_V8 120 // (60)
+#define DIFFICULTY_BLOCKS_COUNT_V8 121 //DIFFICULTY_WINDOW_V8 + 1 has to be +1 so N = N
+
+// LWMA difficulty V9
+#define DIFFICULTY_WINDOW_V9                            120
+#define DIFFICULTY_BLOCKS_COUNT_V9                      121
+#define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V9           60*4
+#define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V9            30
+#define DIFFICULTY_TARGET_V9                            60  // seconds
+
+// LWMA difficulty V10
+#define DIFFICULTY_WINDOW_V10                            120
+#define DIFFICULTY_BLOCKS_COUNT_V10                      121
+#define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V10           60*4
+#define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V10            11
+#define DIFFICULTY_TARGET_V10                            60  // seconds
+
+// LWMA difficulty V12
+#define DIFFICULTY_WINDOW_V12                            120
+#define DIFFICULTY_BLOCKS_COUNT_V12                      121
+#define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V12           60*4
+#define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V12            11
+#define DIFFICULTY_TARGET_V12                            120  // seconds
+
+// LWMA difficulty V13
+#define DIFFICULTY_WINDOW_V13                            120
+#define DIFFICULTY_BLOCKS_COUNT_V13                      121
+#define CRYPTONOTE_BLOCK_FUTURE_TIME_LIMIT_V13           60*4
+#define BLOCKCHAIN_TIMESTAMP_CHECK_WINDOW_V13            11
+#define DIFFICULTY_TARGET_V13                            300  // seconds
 
 
 #define CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_SECONDS_V1   DIFFICULTY_TARGET_V1 * CRYPTONOTE_LOCKED_TX_ALLOWED_DELTA_BLOCKS
@@ -93,7 +134,7 @@
 #define DIFFICULTY_BLOCKS_ESTIMATE_TIMESPAN             DIFFICULTY_TARGET_V1 //just alias; used by tests
 
 
-#define BLOCKS_IDS_SYNCHRONIZING_DEFAULT_COUNT          10000  //by default, blocks ids count in synchronizing
+#define BLOCKS_IDS_SYNCHRONIZING_DEFAULT_COUNT          100  //by default, blocks ids count in synchronizing
 #define BLOCKS_IDS_SYNCHRONIZING_MAX_COUNT              25000  //max blocks ids count in synchronizing
 #define BLOCKS_SYNCHRONIZING_DEFAULT_COUNT_PRE_V4       100    //by default, blocks count in blocks downloading
 #define BLOCKS_SYNCHRONIZING_DEFAULT_COUNT              20     //by default, blocks count in blocks downloading
@@ -158,22 +199,31 @@
 
 #define RPC_IP_FAILS_BEFORE_BLOCK                       3
 
-#define CRYPTONOTE_NAME                         "bitmonero"
+#define CRYPTONOTE_NAME                         "X-CASH"
 #define CRYPTONOTE_BLOCKCHAINDATA_FILENAME      "data.mdb"
 #define CRYPTONOTE_BLOCKCHAINDATA_LOCK_FILENAME "lock.mdb"
 #define P2P_NET_DATA_FILENAME                   "p2pstate.bin"
 #define RPC_PAYMENTS_DATA_FILENAME              "rpcpayments.bin"
-#define MINER_CONFIG_FILE_NAME                  "miner_conf.json"
+#define MINER_CONFIG_FILE_NAME                  "xcashd_conf.json"
 
 #define THREAD_STACK_SIZE                       5 * 1024 * 1024
 
-#define HF_VERSION_DYNAMIC_FEE                  4
+
+#define HF_VERSION_DYNAMIC_FEE                  6
+#define HF_VERSION_ENFORCE_RCT                  6
+#define HF_VERSION_BULLETPROOFS                 10
+#define HF_VERSION_MIN_MIXIN_20                 10
+#define HF_VERSION_PER_BYTE_FEE                 10
+#define HF_VERSION_TWO_MINUTE_BLOCK_TIME        12
+#define HF_BLOCK_HEIGHT_TWO_MINUTE_BLOCK_TIME   281000
+
+// #define HF_VERSION_DYNAMIC_FEE                  4
 #define HF_VERSION_MIN_MIXIN_4                  6
 #define HF_VERSION_MIN_MIXIN_6                  7
 #define HF_VERSION_MIN_MIXIN_10                 8
 #define HF_VERSION_MIN_MIXIN_15                 15
-#define HF_VERSION_ENFORCE_RCT                  6
-#define HF_VERSION_PER_BYTE_FEE                 8
+// #define HF_VERSION_ENFORCE_RCT                  6
+// #define HF_VERSION_PER_BYTE_FEE                 8
 #define HF_VERSION_SMALLER_BP                   10
 #define HF_VERSION_LONG_TERM_BLOCK_WEIGHT       10
 #define HF_VERSION_MIN_2_OUTPUTS                12
@@ -192,7 +242,7 @@
 #define PER_KB_FEE_QUANTIZATION_DECIMALS        8
 #define CRYPTONOTE_SCALING_2021_FEE_ROUNDING_PLACES 2
 
-#define HASH_OF_HASHES_STEP                     512
+#define HASH_OF_HASHES_STEP                     256
 
 #define DEFAULT_TXPOOL_MAX_WEIGHT               648000000ull // 3 days at 300000, in bytes
 
@@ -215,27 +265,31 @@
 #define MAX_TX_EXTRA_SIZE                       1060
 
 #define XCASHTECH
+#define HF_VERSION_PROOF_OF_STAKE 13
+#define HF_BLOCK_HEIGHT_PROOF_OF_STAKE 800000 // The first block of the X-CASH proof of stake
+
+
 
 // New constants are intended to go here
 namespace config
 {
   uint64_t const DEFAULT_FEE_ATOMIC_XMR_PER_KB = 500; // Just a placeholder!  Change me!
   uint8_t const FEE_CALCULATION_MAX_RETRIES = 10;
-  uint64_t const DEFAULT_DUST_THRESHOLD = ((uint64_t)2000000000); // 2 * pow(10, 9)
-  uint64_t const BASE_REWARD_CLAMP_THRESHOLD = ((uint64_t)100000000); // pow(10, 8)
+  uint64_t const DEFAULT_DUST_THRESHOLD = ((uint64_t)2000); // 2 * pow(10, 9)
+  uint64_t const BASE_REWARD_CLAMP_THRESHOLD = ((uint64_t)100); // pow(10, 8)
 
-  uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 18;
-  uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 19;
+  uint64_t const CRYPTONOTE_PUBLIC_ADDRESS_BASE58_PREFIX = 0x5c134;
+  uint64_t const CRYPTONOTE_PUBLIC_INTEGRATED_ADDRESS_BASE58_PREFIX = 0x3fc134;
   uint64_t const CRYPTONOTE_PUBLIC_SUBADDRESS_BASE58_PREFIX = 42;
-  uint16_t const P2P_DEFAULT_PORT = 18080;
-  uint16_t const RPC_DEFAULT_PORT = 18081;
-  uint16_t const ZMQ_RPC_DEFAULT_PORT = 18082;
+  uint16_t const P2P_DEFAULT_PORT = 18280;
+  uint16_t const RPC_DEFAULT_PORT = 18281;
+  uint16_t const ZMQ_RPC_DEFAULT_PORT = 18282;
   boost::uuids::uuid const NETWORK_ID = { {
-      0x12 ,0x30, 0xF1, 0x71 , 0x61, 0x04 , 0x41, 0x61, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x10
-    } }; // Bender's nightmare
-  std::string const GENESIS_TX = "013c01ff0001ffffffffffff03029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd08807121017767aafcde9be00dcfd098715ebcf7f410daebc582fda69d24a28e9d0bc890d1";
+      0x10 ,0x10, 0x41, 0x53 , 0x48, 0x62 , 0x41, 0x65, 0x17, 0x31, 0x00, 0x82, 0x16, 0xA1, 0xA1, 0x10
+    } };
+  std::string const GENESIS_TX = "013c01ff0001b197bcc5c605029b2e4c0281c0b02e7c53291a94d1d0cbff8883f8024f5142ee494ffbbd0880712101f1dde8d8d6c53e9d2e920d6e66432eaff6a85b2d25043fc29ef477b075b143df";
   uint32_t const GENESIS_NONCE = 10000;
-
+  
   // Hash domain separators
   const char HASH_KEY_BULLETPROOF_EXPONENT[] = "bulletproof";
   const char HASH_KEY_BULLETPROOF_PLUS_EXPONENT[] = "bulletproof_plus";

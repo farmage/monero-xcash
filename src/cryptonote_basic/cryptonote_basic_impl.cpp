@@ -80,17 +80,30 @@ namespace cryptonote {
     return CRYPTONOTE_MAX_TX_SIZE;
   }
   //-----------------------------------------------------------------------------------------------
-  bool get_block_reward(size_t median_weight, size_t current_block_weight, uint64_t already_generated_coins, uint64_t &reward, uint8_t version) {
-    static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V1%60==0,"difficulty targets must be a multiple of 60");
-    const int target = version < 2 ? DIFFICULTY_TARGET_V1 : DIFFICULTY_TARGET_V2;
-    const int target_minutes = target / 60;
-    const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes-1);
+  bool get_block_reward(size_t median_weight, size_t current_block_weight, uint64_t already_generated_coins, uint64_t &reward, uint8_t version, uint64_t block_height) {
+    static_assert(DIFFICULTY_TARGET_V1%60==0&&DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V8%60==0&&DIFFICULTY_TARGET_V9%60==0&&DIFFICULTY_TARGET_V10%60==0&&DIFFICULTY_TARGET_V12%60==0&&DIFFICULTY_TARGET_V13%60==0,"difficulty targets must be a multiple of 60");
+    const int target = version < HF_VERSION_TWO_MINUTE_BLOCK_TIME ? DIFFICULTY_TARGET_V1 : version < HF_VERSION_PROOF_OF_STAKE ? DIFFICULTY_TARGET_V12 : DIFFICULTY_TARGET_V13;
+    const int target_minutes = version < HF_VERSION_TWO_MINUTE_BLOCK_TIME ? DIFFICULTY_TARGET_V1 / 60 : version < HF_VERSION_PROOF_OF_STAKE ? DIFFICULTY_TARGET_V12 / 60 : DIFFICULTY_TARGET_V13 / 60;
+    const int emission_speed_factor = version < HF_VERSION_PROOF_OF_STAKE ? EMISSION_SPEED_FACTOR_PER_MINUTE : EMISSION_SPEED_FACTOR_PER_MINUTE - 1; // double the block reward when switching to a five minute block time
+
+
+    // static_assert(DIFFICULTY_TARGET_V2%60==0&&DIFFICULTY_TARGET_V1%60==0,"difficulty targets must be a multiple of 60");
+    // const int target = version < 2 ? DIFFICULTY_TARGET_V1 : DIFFICULTY_TARGET_V2;
+    // const int target_minutes = target / 60;
+    // const int emission_speed_factor = EMISSION_SPEED_FACTOR_PER_MINUTE - (target_minutes-1);
 
     uint64_t base_reward = (MONEY_SUPPLY - already_generated_coins) >> emission_speed_factor;
+
+    if (block_height == PREMINE_BLOCK_HEIGHT && already_generated_coins < PREMINE_BLOCK_REWARD)
+    {
+        base_reward = PREMINE_BLOCK_REWARD;
+    }
+
     if (base_reward < FINAL_SUBSIDY_PER_MINUTE*target_minutes)
     {
       base_reward = FINAL_SUBSIDY_PER_MINUTE*target_minutes;
     }
+
 
     uint64_t full_reward_zone = get_min_block_weight(version);
 
