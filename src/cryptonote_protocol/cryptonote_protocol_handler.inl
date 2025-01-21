@@ -826,7 +826,7 @@ namespace cryptonote
 
         // load json & DNS checkpoints every 10min/hour respectively,
         // and verify them with respect to what blocks we already have
-        CHECK_AND_ASSERT_MES(m_core.update_checkpoints(), 1, "One or more checkpoints loaded from json or dns conflicted with existing checkpoints.");
+        // CHECK_AND_ASSERT_MES(m_core.update_checkpoints(), 1, "One or more checkpoints loaded from json or dns conflicted with existing checkpoints.");
       }
     } 
     else
