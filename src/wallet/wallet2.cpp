@@ -877,7 +877,7 @@ uint64_t estimate_tx_weight(bool use_rct, int n_inputs, int mixin, int n_outputs
 
 uint8_t get_bulletproof_fork()
 {
-  return 8;
+  return HF_VERSION_BULLETPROOFS;
 }
 
 uint8_t get_bulletproof_plus_fork()
@@ -8729,33 +8729,38 @@ int wallet2::get_fee_algorithm()
     return 3;
   if (use_fork_rules(5, 0))
     return 2;
-  if (use_fork_rules(3, -30 * 14))
-   return 1;
+  // if (use_fork_rules(3, -30 * 14))
+  if (use_fork_rules(3, -720 * 14))
+    return 1;
   return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_min_ring_size()
 {
-  if (use_fork_rules(HF_VERSION_MIN_MIXIN_15, 0))
-    return 16;
-  if (use_fork_rules(8, 10))
-    return 11;
-  if (use_fork_rules(7, 10))
-    return 7;
-  if (use_fork_rules(6, 10))
-    return 5;
-  if (use_fork_rules(2, 10))
-    return 3;
-  return 0;
+  return use_fork_rules(HF_VERSION_MIN_MIXIN_20,10) == true ? 21 : 2;
+
+  // if (use_fork_rules(HF_VERSION_MIN_MIXIN_15, 0))
+  //   return 16;
+  // if (use_fork_rules(8, 10))
+  //   return 11;
+  // if (use_fork_rules(7, 10))
+  //   return 7;
+  // if (use_fork_rules(6, 10))
+  //   return 5;
+  // if (use_fork_rules(2, 10))
+  //   return 3;
+  // return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::get_max_ring_size()
 {
-  if (use_fork_rules(HF_VERSION_MIN_MIXIN_15, 0))
-    return 16;
-  if (use_fork_rules(8, 10))
-    return 11;
-  return 0;
+  return use_fork_rules(HF_VERSION_MIN_MIXIN_20,10) == true ? 21 : 11;
+
+  // if (use_fork_rules(HF_VERSION_MIN_MIXIN_15, 0))
+  //   return 16;
+  // if (use_fork_rules(8, 10))
+  //   return 11;
+  // return 0;
 }
 //------------------------------------------------------------------------------------------------------------------------------
 uint64_t wallet2::adjust_mixin(uint64_t mixin)
