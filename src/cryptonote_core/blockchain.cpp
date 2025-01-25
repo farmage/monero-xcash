@@ -3379,7 +3379,7 @@ bool Blockchain::check_tx_inputs(transaction& tx, tx_verification_context &tvc, 
     // if (hf_version >= HF_VERSION_SAME_MIXIN)
     if (hf_version >= HF_VERSION_MIN_MIXIN_20 && min_actual_mixin != 20)
     {
-      // if (min_actual_mixin != max_actual_mixin)
+      if (min_actual_mixin != max_actual_mixin)
       {
         MERROR_VER("Tx " << get_transaction_hash(tx) << " has varying ring size (" << (min_actual_mixin + 1) << "-" << (max_actual_mixin + 1) << "), it should be constant");
         tvc.m_low_mixin = true;
